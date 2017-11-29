@@ -4,3 +4,10 @@ this script will generate a csv (time_report.csv) file with the times each user 
 
 It will also generate a summary (time_report_summary.txt, which includes the times a user has spend on a project overall.
 
+
+call the script as follows:
+
+python3 getReport.py -h <host - z.B. https://www.myjira.de -u <username of your jira user> -p <password of your jira user>
+
+
+note that your user needs to have the required access permissions in order for this script to work.
