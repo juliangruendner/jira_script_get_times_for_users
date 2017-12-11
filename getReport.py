@@ -9,7 +9,7 @@ cfg = {'jira_host_address': 'https://www.jira.com/jira',
        'jira_username': 'my_username',
        'jira_user_password': 'password_string',
        'max_results': '1000',
-       'jira_project': 'PROJECTNAME'
+       'jira_project': 'MAD17'
        }
 
 context = ssl._create_unverified_context()
@@ -52,7 +52,6 @@ def getRequestWithAuthHeaderRetJson(requestUrl):
     request = urllib2.Request(requestUrl)
     sUserPw = '%s:%s' % (cfg['jira_username'], cfg['jira_user_password'])
     base64string = base64.b64encode(str.encode(sUserPw))
-
     request.add_header("Authorization", b'Basic ' + base64string)
     result = urllib2.urlopen(request, context=context)
     respJson = result.read()
@@ -101,7 +100,7 @@ def readCommandLine(args):
         if opt == '-h':
             cfg['jira_host_address'] = arg
         elif opt == '-u':
-            cfg['jira_user_email'] = arg
+            cfg['jira_username'] = arg
         elif opt == '-p':
             cfg['jira_user_password'] = arg
 
@@ -111,13 +110,13 @@ def main():
     print("-h <host - z.B. https://www.myjira.de -u <username of your jira user> -p <password of your jira user> \n\n")
     readCommandLine(sys.argv[1:])
 
-
     allIssueIds = getAllIssueIds()
 
     for issueId in allIssueIds:
         getWorklogForIssue(issueId)
 
     print(myWorklogs)
+
 
     with open('time_report.csv', 'wt', encoding="UTF-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=';',
