@@ -6,8 +6,8 @@ import csv
 import sys, getopt
 
 cfg = {'jira_host_address': 'https://www.jira.com/jira',
-       'jira_username': 'my_username',
-       'jira_user_password': 'password_string',
+       'jira_username': 'username',
+       'jira_user_password': 'testpw',
        'max_results': '1000',
        'jira_project': 'MAD17'
        }
@@ -20,6 +20,7 @@ def getAllIssueIds():
     allIssuesUrl = cfg['jira_host_address'] + '/rest/api/2/search?jql=project=' + cfg['jira_project'] + '&maxResults=' + \
                    cfg['max_results']
 
+    print(allIssuesUrl)
     issues = getRequestWithAuthHeaderRetJson(allIssuesUrl)['issues']
     issueIds = []
 
@@ -52,6 +53,7 @@ def getRequestWithAuthHeaderRetJson(requestUrl):
     request = urllib2.Request(requestUrl)
     sUserPw = '%s:%s' % (cfg['jira_username'], cfg['jira_user_password'])
     base64string = base64.b64encode(str.encode(sUserPw))
+
     request.add_header("Authorization", b'Basic ' + base64string)
     result = urllib2.urlopen(request, context=context)
     respJson = result.read()
@@ -94,7 +96,7 @@ def getOverallWorklogByUser():
 
 def readCommandLine(args):
 
-    opts,args = getopt.getopt(args, 'h:u:p:')
+    opts,args = getopt.getopt(args, 'h:u:p:g:')
 
     for opt, arg in opts:
         if opt == '-h':
@@ -103,11 +105,14 @@ def readCommandLine(args):
             cfg['jira_username'] = arg
         elif opt == '-p':
             cfg['jira_user_password'] = arg
+        elif opt == '-g':
+            cfg['jira_project'] = arg
 
 def main():
 
     print("to use this script u can either change cfg dict in the script file or use the following command line options")
-    print("-h <host - z.B. https://www.myjira.de -u <username of your jira user> -p <password of your jira user> \n\n")
+    print("-h <host - z.B. https://www.myjira.de -u <username of your jira user> -p <password of your jira user> -g <project used>\n\n")
+    print("note that the pw has to be in '' if it contains #")
     readCommandLine(sys.argv[1:])
 
     allIssueIds = getAllIssueIds()
